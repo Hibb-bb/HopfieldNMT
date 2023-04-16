@@ -28,6 +28,14 @@ If you used previous versions of OpenNMT-py, you can check the [Changelog](https
 
 ----
 
+## Toy Example
+
+```
+wget https://s3.amazonaws.com/opennmt-trainingdata/toy-ende.tar.gz
+tar xf toy-ende.tar.gz
+```
+
+
 ## Tutorials:
 
 * How to finetune NLLB-200 with your dataset: [Tuto Finetune NLLB-200](https://forum.opennmt.net/t/finetuning-and-curating-nllb-200-with-opennmt-py/5238)
