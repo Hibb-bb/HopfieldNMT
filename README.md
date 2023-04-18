@@ -1,32 +1,23 @@
 # OpenNMT-py: Open-Source Neural Machine Translation
 
-[![Build Status](https://github.com/OpenNMT/OpenNMT-py/workflows/Lint%20&%20Tests/badge.svg)](https://github.com/OpenNMT/OpenNMT-py/actions)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://opennmt.net/OpenNMT-py/)
-[![Gitter](https://badges.gitter.im/OpenNMT/OpenNMT-py.svg)](https://gitter.im/OpenNMT/OpenNMT-py?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Forum](https://img.shields.io/discourse/status?server=https%3A%2F%2Fforum.opennmt.net%2F)](https://forum.opennmt.net/)
+## ToDos
 
-OpenNMT-py is the [PyTorch](https://github.com/pytorch/pytorch) version of the [OpenNMT](https://opennmt.net) project, an open-source (MIT) neural machine translation (and beyond!) framework. It is designed to be research friendly to try out new ideas in translation, language modeling, summarization, and many other NLP tasks. Some companies have proven the code to be production ready.
+### ToRuns
 
-We love contributions! Please look at issues marked with the [contributions welcome](https://github.com/OpenNMT/OpenNMT-py/issues?q=is%3Aissue+is%3Aopen+label%3A%22contributions+welcome%22) tag.
+- [ ] Sparsemax Transformer en-de
+- [ ] Sparsemax Hopfield en-de
+- [ ] Dense Transformer en-de
+- [ ] Dense Hopfield en-de
+- [ ] Entmax Transformer en-de
+- [ ] Entmax Hopfield en-de
 
-Before raising an issue, make sure you read the requirements and the [Full Documentation](https://opennmt.net/OpenNMT-py/) examples.
+___
 
-Unless there is a bug, please use the [Forum](https://forum.opennmt.net) or [Gitter](https://gitter.im/OpenNMT/OpenNMT-py) to ask questions.
-
-----
-## For beginners:
-
-There is a new step-by-step and explained tuto (Thanks to Yasmin Moslem): [Tutorial](https://github.com/ymoslem/OpenNMT-Tutorial)
-
-Please try to read and/or follow before raising newbies issues.
-
-Otherwise you can just have a look at the [Quickstart](https://opennmt.net/OpenNMT-py/quickstart.html) steps
-
-----
-
-If you used previous versions of OpenNMT-py, you can check the [Changelog](https://github.com/OpenNMT/OpenNMT-py/blob/master/CHANGELOG.md) or the [Breaking Changes](https://github.com/OpenNMT/OpenNMT-py/blob/master/docs/source/changes.md)
-
-----
+### ToCodes
+- [ ] Summarization CNNDM
+- [ ] Language Modeling Hopfield Decoder
+- [ ] Check MLM and Autoregressive LM modes
+- [ ] Evaluation Metric for NMT, LM and Summarization
 
 ## Toy Example
 

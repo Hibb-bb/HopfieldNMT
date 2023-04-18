@@ -344,6 +344,9 @@ def model_opts(parser):
               help="Size of windows in the cnn, the kernel_size is "
                    "(cnn_kernel_width, 1) in conv layer")
 
+    group.add('--sparse', type=str, default='softmax',
+              choices=['softmax', 'sparsemax', 'entmax'])
+
     group.add('--layer_norm', '-layer_norm',
               type=str, default='standard',
               choices=['standard', 'rms'], help='The type of layer'

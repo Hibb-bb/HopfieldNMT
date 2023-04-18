@@ -40,18 +40,15 @@ valid_steps: 5000
 bucket_size: 262144
 num_workers: 4
 prefetch_factor: 400
-world_size: 1
-gpu_ranks: [0]
 batch_type: "tokens"
-batch_size: 5000
-valid_batch_size: 4096
-batch_size_multiple: 8
+batch_size: 2048
+valid_batch_size: 1024
 accum_count: [10]
 accum_steps: [0]
 
 model_dtype: "fp16"
 #apex_opt_level: "O2"
-optim: "fusedadam"
+optim: "adam"
 learning_rate: 2
 warmup_steps: 4000
 decay_method: "noam"
@@ -62,8 +59,8 @@ param_init: 0
 param_init_glorot: true
 normalization: "tokens"
 
-encoder_type: transformer
-decoder_type: transformer
+encoder_type: hopfield
+decoder_type: hopfield
 enc_layers: 6
 dec_layers: 6
 heads: 8
@@ -76,4 +73,3 @@ attention_dropout: [0.1]
 share_decoder_embeddings: true
 share_embeddings: true
 position_encoding: true
-

@@ -25,7 +25,7 @@ class HopfieldDecoderLayer(Module):
                  hopfield_association_cross: Hopfield,
                  dim_feedforward: int = 2048,
                  dropout: float = 0.1,
-                 activation: str = r'relu'
+                 activation: str = r'relu',
                  ):
         """
         Initialise a new instance of a Hopfield association-based encoder module.
@@ -203,7 +203,8 @@ class HopfieldTransformerDecoderBase(DecoderBase):
             opt.full_context_alignment,
             opt.alignment_layer,
             alignment_heads=opt.alignment_heads,
-            layer_norm=opt.layer_norm
+            layer_norm=opt.layer_norm,
+            sparse=opt.sparse
         )
 
     def init_state(self, src, enc_out, enc_final_hs):
@@ -290,7 +291,8 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
         alignment_layer,
         alignment_heads,
         layer_norm='standard',
-        scaling=0.1
+        scaling=0.1,
+        sparse='softmax'
     ):
         super(HopfieldTransformerDecoder, self).__init__(
             d_model, copy_attn, embeddings, alignment_layer
@@ -301,12 +303,14 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
                      hidden_size=d_model,
                      output_size=d_model,
                      scaling=scaling,
-                     num_heads=heads),
+                     num_heads=heads,
+                     sparse=sparse),
             Hopfield(input_size=embeddings.embedding_size,
                      hidden_size=d_model,
                      output_size=d_model,
                      scaling=scaling,
-                     num_heads=heads),
+                     num_heads=heads,
+                     sparse=sparse),
             dropout=dropout,
         )]
 
@@ -318,13 +322,15 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
                             output_size=d_model,
                             scaling=scaling,
                             dropout=dropout,
-                            num_heads=heads),
+                            num_heads=heads,
+                            sparse=sparse),
                     Hopfield(input_size=d_model,
                             hidden_size=d_model,
                             output_size=d_model,
                             scaling=scaling,
                             dropout=dropout,
-                            num_heads=heads),
+                            num_heads=heads,
+                            sparse=sparse),
             ))
 
         self.transformer_layers = nn.ModuleList(layer_list)

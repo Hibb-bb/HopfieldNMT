@@ -54,7 +54,8 @@ class Hopfield(Module):
                  input_bias: bool = True,
                  concat_bias_pattern: bool = False,
                  add_zero_association: bool = False,
-                 disable_out_projection: bool = False
+                 disable_out_projection: bool = False,
+                 sparse: str = 'softmax'
                  ):
         """
         Initialise new instance of a Hopfield module.
@@ -96,6 +97,8 @@ class Hopfield(Module):
         assert type(batch_first) == bool, f'"batch_first" needs to be a boolean, not {type(batch_first)}.'
         assert (association_activation is None) or (type(association_activation) == str)
 
+        self.sparse = sparse
+
         self.num_heads = num_heads
         # Initialise Hopfield association module.
         self.association_core = HopfieldCore(
@@ -106,7 +109,7 @@ class Hopfield(Module):
             query_as_static=state_pattern_as_static, value_as_static=pattern_projection_as_static,
             value_as_connected=pattern_projection_as_connected, normalize_pattern=normalize_hopfield_space,
             normalize_pattern_affine=normalize_hopfield_space_affine,
-            normalize_pattern_eps=normalize_hopfield_space_eps)
+            normalize_pattern_eps=normalize_hopfield_space_eps, sparse=sparse)
         self.association_activation = None
         if association_activation is not None:
             self.association_activation = getattr(torch, association_activation, None)
@@ -413,10 +416,12 @@ class HopfieldCore(Module):
                  value_as_connected=False,        # type: bool
                  normalize_pattern=False,         # type: bool
                  normalize_pattern_affine=False,  # type: bool
-                 normalize_pattern_eps=1e-5       # type: float
+                 normalize_pattern_eps=1e-5,      # type: float
+                 sparse='softmax'
                  ):
         super(HopfieldCore, self).__init__()
 
+        self.sparse = sparse
         assert (type(key_as_static) == bool) and (type(query_as_static) == bool) and (type(value_as_static) == bool)
         self.key_as_static, self.query_as_static, self.value_as_static = key_as_static, query_as_static, value_as_static
         num_non_static = 3 - (self.key_as_static + self.query_as_static + self.value_as_static)
@@ -663,7 +668,7 @@ class HopfieldCore(Module):
                 p_norm_weight=self.p_norm_weight, p_norm_bias=self.p_norm_bias,
                 head_dim=head_dim, pattern_dim=self.pattern_dim, scaling=scaling,
                 update_steps_max=update_steps_max, update_steps_eps=update_steps_eps,
-                return_raw_associations=return_raw_associations, return_projected_patterns=return_pattern_projections)
+                return_raw_associations=return_raw_associations, return_projected_patterns=return_pattern_projections, sparse=self.sparse)
         else:
             return hopfield_core_forward(
                 query=query, key=key, value=value, embed_dim_to_check=embed_dim_to_check, num_heads=self.num_heads,
@@ -678,4 +683,4 @@ class HopfieldCore(Module):
                 p_norm_weight=self.p_norm_weight, p_norm_bias=self.p_norm_bias,
                 head_dim=head_dim, pattern_dim=self.pattern_dim, scaling=scaling,
                 update_steps_max=update_steps_max, update_steps_eps=update_steps_eps,
-                return_raw_associations=return_raw_associations, return_projected_patterns=return_pattern_projections)
+                return_raw_associations=return_raw_associations, return_projected_patterns=return_pattern_projections, sparse=self.sparse)

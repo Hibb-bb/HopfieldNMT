@@ -27,7 +27,7 @@ class HopfieldEncoderLayer(Module):
                  hopfield_association: Hopfield,
                  dim_feedforward: int = 2048,
                  dropout: float = 0.1,
-                 activation: str = r'relu'
+                 activation: str = r'relu',
                  ):
         """
         Initialise a new instance of a Hopfield association-based encoder module.
@@ -134,7 +134,7 @@ class HopfieldTransformerEncoder(EncoderBase):
     """
 
     def __init__(self, num_layers, d_model, heads, dropout,
-                 attention_dropout, embeddings, scaling=0.1
+                 attention_dropout, embeddings, scaling=0.1,sparse='softmax'
                  ):
         super(HopfieldTransformerEncoder, self).__init__()
 
@@ -144,7 +144,8 @@ class HopfieldTransformerEncoder(EncoderBase):
                      hidden_size=d_model,
                      output_size=d_model,
                      scaling=scaling,
-                     num_heads=heads), 
+                     num_heads=heads,
+                     sparse=sparse), 
             dropout=dropout
         )]
         
@@ -153,7 +154,8 @@ class HopfieldTransformerEncoder(EncoderBase):
                 hopfield_association=Hopfield(
                     input_size=d_model,
                     scaling=0.1, 
-                    num_heads=heads), 
+                    num_heads=heads,
+                    sparse=sparse), 
                 dropout=dropout
             ))
 
@@ -171,7 +173,8 @@ class HopfieldTransformerEncoder(EncoderBase):
             opt.attention_dropout[0] if type(opt.attention_dropout)
             is list else opt.attention_dropout,
             embeddings,
-            opt.scaling
+            opt.scaling,
+            sparse=opt.sparse
             )
 
     def forward(self, src, src_len=None):
