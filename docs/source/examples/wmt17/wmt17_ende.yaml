@@ -28,7 +28,7 @@ data:
         path_tgt: wmt17_en_de/dev.trg.bpe
 
 # Model configuration
-save_model: wmt17_en_de/bigwmt17
+save_model: wmt17_en_de/tran-wmt17
 keep_checkpoint: 50
 save_checkpoint_steps: 5000
 average_decay: 0
@@ -66,10 +66,10 @@ encoder_type: transformer
 decoder_type: transformer
 enc_layers: 6
 dec_layers: 6
-heads: 16
-hidden_size: 1024
-word_vec_size: 1024
-transformer_ff: 4096
+heads: 8
+hidden_size: 512
+word_vec_size: 512
+transformer_ff: 2048
 dropout_steps: [0]
 dropout: [0.1]
 attention_dropout: [0.1]

@@ -71,6 +71,11 @@ class HopfieldEncoderLayer(Module):
         :param src_key_padding_mask: mask to be applied on stored patterns
         :return: Hopfield-encoded input data
         """
+
+        # print('src', src.size(), src_key_padding_mask.size())
+        if src_key_padding_mask.dim() == 3 and src_key_padding_mask.size(1) == 1:
+            src_key_padding_mask = src_key_padding_mask.squeeze(1)
+
         data_associated = self.hopfield_association(
             input=src, stored_pattern_padding_mask=src_key_padding_mask, association_mask=src_mask)
         src = src + self.dropout_hopfield_association(input=data_associated)
@@ -139,8 +144,8 @@ class HopfieldTransformerEncoder(EncoderBase):
                      hidden_size=d_model,
                      output_size=d_model,
                      scaling=scaling,
-                     dropout=dropout,
-                     num_heads=heads)
+                     num_heads=heads), 
+            dropout=dropout
         )]
         
         for i in range(num_layers-1):
@@ -148,8 +153,8 @@ class HopfieldTransformerEncoder(EncoderBase):
                 hopfield_association=Hopfield(
                     input_size=d_model,
                     scaling=0.1, 
-                    dropout=dropout,
-                    num_heads=heads)
+                    num_heads=heads), 
+                dropout=dropout
             ))
 
         self.transformer = nn.ModuleList(layer_list)
@@ -172,9 +177,9 @@ class HopfieldTransformerEncoder(EncoderBase):
     def forward(self, src, src_len=None):
         """See :func:`EncoderBase.forward()`"""
         enc_out = self.embeddings(src)
-        mask = ~sequence_mask(src_len).unsqueeze(1)
-        mask = mask.unsqueeze(1)
-        mask = mask.expand(-1, -1, mask.size(3), -1)
+        mask = ~sequence_mask(src_len)
+        # mask = mask.unsqueeze(1)
+        # mask = mask.expand(-1, -1, mask.size(3), -1)
         # mask is now (batch x 1 x slen x slen)
         # 1 to be expanded to number of heads in MHA
         # Run the forward pass of every layer of the tranformer.

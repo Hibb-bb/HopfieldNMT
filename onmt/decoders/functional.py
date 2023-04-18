@@ -124,7 +124,7 @@ def hopfield_core_forward(query,                           # type: Tensor
                 embed_dim_to_check, num_heads, in_proj_weight, in_proj_bias,
                 bias_k, bias_v, add_zero_attn, dropout_p, out_proj_weight,
                 out_proj_bias, training=training, key_padding_mask=key_padding_mask,
-                need_weights=need_weights, attn_mask=attn_mask,
+                need_weights=True, attn_mask=attn_mask,
                 use_separate_proj_weight=use_separate_proj_weight,
                 q_proj_weight=q_proj_weight, k_proj_weight=k_proj_weight,
                 v_proj_weight=v_proj_weight, static_k=static_k, static_v=static_v,

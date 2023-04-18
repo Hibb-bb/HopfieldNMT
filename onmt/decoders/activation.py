@@ -7,6 +7,7 @@ from torch.nn import Linear, Module, Parameter
 from typing import Optional
 
 from onmt.decoders.functional import hopfield_core_forward
+from typing import Optional, Tuple, Union
 
 try:
     from torch.nn.modules.linear import _LinearWithBias
@@ -46,7 +47,7 @@ class Hopfield(Module):
                  pattern_projection_as_connected: bool = False,
                  stored_pattern_size: Optional[int] = None,
                  pattern_projection_size: Optional[int] = None,
-
+                 dropout: float = 0.1,
                  batch_first: bool = True,
                  association_activation: Optional[str] = None,
                  c: float = 0.0,
@@ -215,7 +216,7 @@ class Hopfield(Module):
         # Apply Hopfield association and optional activation function.
         return self.association_core(
             query=state_pattern, key=stored_pattern, value=pattern_projection,
-            key_padding_mask=stored_pattern_padding_mask, need_weights=False, attn_mask=association_mask,
+            key_padding_mask=stored_pattern_padding_mask, need_weights=True, attn_mask=association_mask,
             scaling=self.__scaling, update_steps_max=self.__update_steps_max, update_steps_eps=self.__update_steps_eps,
             return_raw_associations=return_raw_associations, return_pattern_projections=return_projected_patterns)
 
@@ -229,13 +230,17 @@ class Hopfield(Module):
         :param association_mask: mask to be applied on inner association matrix
         :return: Hopfield-processed input data
         """
-        association_output = self._maybe_transpose(self._associate(
+
+        output, attn_weight, a, b = self._associate(
             data=input, return_raw_associations=False,
             stored_pattern_padding_mask=stored_pattern_padding_mask,
-            association_mask=association_mask)[0])
+            association_mask=association_mask)
+
+        association_output = self._maybe_transpose(output)
         if self.association_activation is not None:
+
             association_output = self.association_activation(association_output)
-        return association_output
+        return association_output, attn_weight
 
     def get_association_matrix(self, input: Union[Tensor, Tuple[Tensor, Tensor, Tensor]],
                                stored_pattern_padding_mask: Optional[Tensor] = None,

@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch import Tensor
 from torch.nn import Linear, Module, Parameter
 from typing import Optional
-
+from typing import Optional, Tuple, Union
 from onmt.encoders.functional import hopfield_core_forward
 
 try:
@@ -46,7 +46,7 @@ class Hopfield(Module):
                  pattern_projection_as_connected: bool = False,
                  stored_pattern_size: Optional[int] = None,
                  pattern_projection_size: Optional[int] = None,
-
+                 dropout: float = 0.1,
                  batch_first: bool = True,
                  association_activation: Optional[str] = None,
                  c: float = 0.0,

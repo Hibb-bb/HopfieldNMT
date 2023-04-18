@@ -110,3 +110,9 @@ ENV/
 
 # Tensorboard
 runs/
+
+
+# Data Files
+*.gz
+toy-ende/*
+docs/source/examples/wmt17_en_de/*

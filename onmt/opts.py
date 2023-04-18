@@ -262,6 +262,12 @@ def model_opts(parser):
               help="Type of positional encoding. At the moment: "
                    "Sinusoidal fixed, Interleaved or Concat")
 
+    """
+    Hopfield OPTs
+    """
+    group.add('--scaling', type=float, default=0.1)
+
+
     group.add("-update_vocab", "--update_vocab", action="store_true",
               help="Update source and target existing vocabularies")
 
@@ -303,12 +309,12 @@ def model_opts(parser):
 
     group.add('--encoder_type', '-encoder_type', type=str, default='rnn',
               choices=['rnn', 'brnn', 'ggnn', 'mean', 'transformer', 'cnn',
-                       'transformer_lm'],
+                       'transformer_lm', 'hopfield'],
               help="Type of encoder layer to use. Non-RNN layers "
                    "are experimental. Options are "
                    "[rnn|brnn|ggnn|mean|transformer|cnn|transformer_lm].")
     group.add('--decoder_type', '-decoder_type', type=str, default='rnn',
-              choices=['rnn', 'transformer', 'cnn', 'transformer_lm'],
+              choices=['rnn', 'transformer', 'cnn', 'transformer_lm', 'hopfield'],
               help="Type of decoder layer to use. Non-RNN layers "
                    "are experimental. Options are "
                    "[rnn|transformer|cnn|transformer].")

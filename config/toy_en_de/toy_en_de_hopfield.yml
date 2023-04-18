@@ -5,18 +5,18 @@ src_vocab: /storage/HopfieldNMT/toy-ende/run/example.vocab.src
 tgt_vocab: /storage/HopfieldNMT/toy-ende/run/example.vocab.tgt
 
 # Where to save the checkpoints
-save_model: /storage/HopfieldNMT/toy-ende/run/model
+save_model: /storage/HopfieldNMT/toy-ende/run/hopfield/
 
-save_checkpoint_steps: 2000
+save_checkpoint_steps: 500
 keep_checkpoint: 10
 seed: 3435
-train_steps: 20000
-valid_steps: 2000
+train_steps: 2000
+valid_steps: 1000
 warmup_steps: 1000
 report_every: 100
 
-decoder_type: transformer
-encoder_type: transformer
+decoder_type: hopfield
+encoder_type: hopfield
 word_vec_size: 512
 hidden_size: 512
 layers: 6
@@ -31,9 +31,8 @@ decay_method: noam
 learning_rate: 2.0
 max_grad_norm: 0.0
 
-batch_size: 4096
-batch_type: tokens
-normalization: tokens
+batch_type: "tokens"
+batch_size: 1024
 dropout: 0.1
 label_smoothing: 0.1
 
@@ -48,3 +47,5 @@ data:
 param_init: 0.0
 param_init_glorot: 'true'
 position_encoding: 'true'
+share_decoder_embeddings: true
+share_embeddings: true

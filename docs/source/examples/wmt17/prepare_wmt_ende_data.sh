@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-if ! command -v subword-nmt &>/dev/null; then
-  echo "Please install Subword NMT: pip3 install subword-nmt"
-  exit 2
-fi
+# if ! command -v subword-nmt &>/dev/null; then
+#   echo "Please install Subword NMT: pip3 install subword-nmt"
+#   exit 2
+# fi
 
 mkdir -p wmt17_en_de
 cd wmt17_en_de
