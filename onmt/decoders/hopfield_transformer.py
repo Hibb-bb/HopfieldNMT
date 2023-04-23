@@ -56,7 +56,7 @@ class HopfieldDecoderLayer(Module):
 
     def _compute_dec_mask(self, tgt_pad_mask, future):
         tgt_len = tgt_pad_mask.size(-1)
-        if not future:  # apply future_mask, result mask in (B, T, T)
+        if True:  # apply future_mask, result mask in (B, T, T)
             future_mask = torch.ones(
                 [tgt_len, tgt_len],
                 device=tgt_pad_mask.device,
@@ -69,8 +69,8 @@ class HopfieldDecoderLayer(Module):
             except AttributeError:
                 pass
             dec_mask = torch.gt(tgt_pad_mask + future_mask, 0)
-        else:  # only mask padding, result mask in (B, 1, T)
-            dec_mask = tgt_pad_mask
+        # else:  # only mask padding, result mask in (B, 1, T)
+            # dec_mask = tgt_pad_mask
         return dec_mask # (B*heads, T, S)
 
     def reset_parameters(self) -> None:
@@ -98,6 +98,8 @@ class HopfieldDecoderLayer(Module):
         :return: Hopfield-decoded input
         """
 
+
+        # print(tgt_key_padding_mask.shape, tgt_key_padding_mask[0][0])
         tgt_mask = self._compute_dec_mask(tgt_key_padding_mask, future=False)
         if tgt_key_padding_mask.dim() == 3 and tgt_key_padding_mask.size(1) == 1:
             tgt_key_padding_mask = tgt_key_padding_mask.squeeze(1)
@@ -105,7 +107,9 @@ class HopfieldDecoderLayer(Module):
         head_num = self.hopfield_association_self.num_heads
         if tgt_mask.size(0) == tgt.size(0):
             tgt_mask = tgt_mask.repeat(head_num, 1, 1)
-
+        
+        # print(tgt_mask[0, 0])
+        # raise Exception
         data_associated, self_attn_weight = self.hopfield_association_self(
             input=tgt, stored_pattern_padding_mask=tgt_key_padding_mask,
             association_mask=tgt_mask)
@@ -291,7 +295,7 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
         alignment_layer,
         alignment_heads,
         layer_norm='standard',
-        scaling=0.1,
+        scaling=0.04,
         sparse='softmax'
     ):
         super(HopfieldTransformerDecoder, self).__init__(
@@ -304,13 +308,15 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
                      output_size=d_model,
                      scaling=scaling,
                      num_heads=heads,
-                     sparse=sparse),
+                     sparse=sparse,
+                     update_steps_max=1),
             Hopfield(input_size=embeddings.embedding_size,
                      hidden_size=d_model,
                      output_size=d_model,
                      scaling=scaling,
                      num_heads=heads,
-                     sparse=sparse),
+                     sparse=sparse,
+                     update_steps_max=1),
             dropout=dropout,
         )]
 
@@ -323,14 +329,16 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
                             scaling=scaling,
                             dropout=dropout,
                             num_heads=heads,
-                            sparse=sparse),
+                            sparse=sparse,
+                            update_steps_max=5),
                     Hopfield(input_size=d_model,
                             hidden_size=d_model,
                             output_size=d_model,
                             scaling=scaling,
                             dropout=dropout,
                             num_heads=heads,
-                            sparse=sparse),
+                            sparse=sparse,
+                            update_steps_max=5),
             ))
 
         self.transformer_layers = nn.ModuleList(layer_list)
@@ -383,7 +391,8 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
             )
             # if attn_align is not None:
             #     attn_aligns.append(attn_align)
-
+        if torch.isnan(dec_out).any():
+            raise Exception('decoder nan problem')
         dec_out = self.layer_norm(dec_out)
 
         attns = {"std": attn}

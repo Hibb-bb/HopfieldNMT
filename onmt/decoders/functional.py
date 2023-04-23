@@ -631,6 +631,9 @@ def hopfield_core_forward(query,                           # type: Tensor
             else:
                 attn_output_weights += attn_mask
 
+        if torch.isnan(attn_output_weights).any():
+            raise Exception('attn weight nan')
+
         if key_padding_mask is not None:
             attn_output_weights = attn_output_weights.view(bsz, num_heads, tgt_len, src_len)
             attn_output_weights = attn_output_weights.masked_fill(
@@ -658,7 +661,7 @@ def hopfield_core_forward(query,                           # type: Tensor
             elif sparse == 'entmax':
                 xi = torch.masked_scatter(input=xi, mask=update_active_heads, source=entmax15(
                     attn_output_weights.masked_select(mask=update_active_heads).view(size=(-1, *xi.shape[1:])), dim=-1))
-
+        
         # Compute threshold-based stopping criterion for Hopfield retrieve iterations.
         with torch.no_grad():
             xi_active = xi.view(size=(bsz, num_heads, tgt_len, src_len))
@@ -675,6 +678,8 @@ def hopfield_core_forward(query,                           # type: Tensor
 
     attn_output_weights = nn.functional.dropout(xi, p=dropout_p, training=training)
     attn_output = torch.bmm(attn_output_weights, v)
+    if torch.isnan(attn_output).any():
+        raise Exception('attn output nan')
     assert list(attn_output.shape[:2]) == [bsz * num_heads, tgt_len]
     attn_output = attn_output.transpose(0, 1).contiguous().view(tgt_len, bsz, -1)
     if out_proj_weight is not None:

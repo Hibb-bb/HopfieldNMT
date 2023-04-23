@@ -266,6 +266,7 @@ def model_opts(parser):
     Hopfield OPTs
     """
     group.add('--scaling', type=float, default=0.1)
+    group.add('--update_steps_max', type=int, default=1)
 
 
     group.add("-update_vocab", "--update_vocab", action="store_true",

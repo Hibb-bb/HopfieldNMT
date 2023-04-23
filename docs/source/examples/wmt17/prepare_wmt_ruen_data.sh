@@ -28,5 +28,5 @@ for LANG in src trg; do
   done
 done
 
-python3 $(dirname $0)/filter_train.py
+python3 ../$(dirname $0)/filter_train.py
 

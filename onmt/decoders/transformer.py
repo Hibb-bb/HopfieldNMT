@@ -29,7 +29,8 @@ class TransformerDecoderLayerBase(nn.Module):
         alignment_heads=0,
         pos_ffn_activation_fn=ActivationFunction.relu,
         add_qkvbias=False,
-        layer_norm='standard'
+        layer_norm='standard',
+        sparse='softmax'
     ):
         """
         Args:
@@ -70,7 +71,8 @@ class TransformerDecoderLayerBase(nn.Module):
                 dropout=attention_dropout,
                 max_relative_positions=max_relative_positions,
                 attn_type="self",
-                add_qkvbias=add_qkvbias
+                add_qkvbias=add_qkvbias,
+                sparse=sparse
             )
         elif self_attn_type == "average":
             self.self_attn = AverageAttention(
@@ -194,7 +196,8 @@ class TransformerDecoderLayer(TransformerDecoderLayerBase):
         alignment_heads=0,
         pos_ffn_activation_fn=ActivationFunction.relu,
         add_qkvbias=False,
-        layer_norm='standard'
+        layer_norm='standard',
+        sparse='softmax'
     ):
         """
         Args:
@@ -213,12 +216,14 @@ class TransformerDecoderLayer(TransformerDecoderLayerBase):
             alignment_heads,
             pos_ffn_activation_fn=pos_ffn_activation_fn,
             add_qkvbias=add_qkvbias,
-            layer_norm=layer_norm
+            layer_norm=layer_norm,
+            sparse=sparse
         )
         self.context_attn = MultiHeadedAttention(
             heads, d_model, dropout=attention_dropout,
             attn_type="context",
-            add_qkvbias=add_qkvbias
+            add_qkvbias=add_qkvbias,
+            sparse=sparse
         )
         if layer_norm == 'standard':
             self.layer_norm_2 = nn.LayerNorm(d_model, eps=1e-6)
@@ -296,7 +301,7 @@ class TransformerDecoderLayer(TransformerDecoderLayerBase):
 
 class TransformerDecoderBase(DecoderBase):
     def __init__(self, d_model, copy_attn, embeddings, alignment_layer,
-                 layer_norm='standard'):
+                 layer_norm='standard', sparse='softmax'):
         super(TransformerDecoderBase, self).__init__()
 
         self.embeddings = embeddings
@@ -339,7 +344,8 @@ class TransformerDecoderBase(DecoderBase):
             alignment_heads=opt.alignment_heads,
             pos_ffn_activation_fn=opt.pos_ffn_activation_fn,
             add_qkvbias=opt.add_qkvbias,
-            layer_norm=opt.layer_norm
+            layer_norm=opt.layer_norm,
+            sparse=opt.sparse
         )
 
     def init_state(self, src, enc_out, enc_final_hs):

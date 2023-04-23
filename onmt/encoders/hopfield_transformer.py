@@ -134,7 +134,7 @@ class HopfieldTransformerEncoder(EncoderBase):
     """
 
     def __init__(self, num_layers, d_model, heads, dropout,
-                 attention_dropout, embeddings, scaling=0.1,sparse='softmax'
+                 attention_dropout, embeddings, scaling=0.04,sparse='softmax'
                  ):
         super(HopfieldTransformerEncoder, self).__init__()
 
@@ -145,7 +145,9 @@ class HopfieldTransformerEncoder(EncoderBase):
                      output_size=d_model,
                      scaling=scaling,
                      num_heads=heads,
-                     sparse=sparse), 
+                     sparse=sparse,
+                     update_steps_max=1
+                     ), 
             dropout=dropout
         )]
         
@@ -155,7 +157,8 @@ class HopfieldTransformerEncoder(EncoderBase):
                     input_size=d_model,
                     scaling=0.1, 
                     num_heads=heads,
-                    sparse=sparse), 
+                    sparse=sparse,
+                    update_steps_max=1), 
                 dropout=dropout
             ))
 
@@ -189,6 +192,10 @@ class HopfieldTransformerEncoder(EncoderBase):
         for layer in self.transformer:
             enc_out = layer(src=enc_out, src_key_padding_mask=mask)
         enc_out = self.layer_norm(enc_out)
+
+        if torch.isnan(enc_out).any():
+            prnt('encode')
+            raise Exception
 
         return enc_out, None, src_len
 

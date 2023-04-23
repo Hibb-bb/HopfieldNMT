@@ -29,13 +29,13 @@ class TransformerEncoderLayer(nn.Module):
     def __init__(self, d_model, heads, d_ff, dropout, attention_dropout,
                  max_relative_positions=0,
                  pos_ffn_activation_fn=ActivationFunction.relu,
-                 add_qkvbias=False):
+                 add_qkvbias=False, sparse='softmax'):
         super(TransformerEncoderLayer, self).__init__()
 
         self.self_attn = MultiHeadedAttention(
             heads, d_model, dropout=attention_dropout,
             max_relative_positions=max_relative_positions,
-            attn_type="self", add_qkvbias=add_qkvbias)
+            attn_type="self", add_qkvbias=add_qkvbias, sparse=sparse)
         self.feed_forward = PositionwiseFeedForward(d_model, d_ff, dropout,
                                                     pos_ffn_activation_fn)
         self.layer_norm = nn.LayerNorm(d_model, eps=1e-6)
@@ -90,7 +90,7 @@ class TransformerEncoder(EncoderBase):
     def __init__(self, num_layers, d_model, heads, d_ff, dropout,
                  attention_dropout, embeddings, max_relative_positions,
                  pos_ffn_activation_fn=ActivationFunction.relu,
-                 add_qkvbias=False):
+                 add_qkvbias=False, sparse='softmax'):
         super(TransformerEncoder, self).__init__()
 
         self.embeddings = embeddings
@@ -99,7 +99,7 @@ class TransformerEncoder(EncoderBase):
                 d_model, heads, d_ff, dropout, attention_dropout,
                 max_relative_positions=max_relative_positions,
                 pos_ffn_activation_fn=pos_ffn_activation_fn,
-                add_qkvbias=add_qkvbias)
+                add_qkvbias=add_qkvbias, sparse=sparse)
              for i in range(num_layers)])
         self.layer_norm = nn.LayerNorm(d_model, eps=1e-6)
 
@@ -117,7 +117,8 @@ class TransformerEncoder(EncoderBase):
             embeddings,
             opt.max_relative_positions,
             pos_ffn_activation_fn=opt.pos_ffn_activation_fn,
-            add_qkvbias=opt.add_qkvbias
+            add_qkvbias=opt.add_qkvbias,
+            sparse=opt.sparse
         )
 
     def forward(self, src, src_len=None):

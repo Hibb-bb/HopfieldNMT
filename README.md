@@ -26,6 +26,27 @@ wget https://s3.amazonaws.com/opennmt-trainingdata/toy-ende.tar.gz
 tar xf toy-ende.tar.gz
 ```
 
+## To run experiment for En-De
+
+```
+cd docs/source/examples/wmt17
+sh prepare_wmt_ende_data.sh
+cd ..
+python3 ../../../onmt/bin/build_vocab.py --config wmt17/wmt17_ende.yaml --n_sample -1
+```
+
+To run standard transformer:
+```
+CUDA_VISIBLE_DEVICES=0,1 python3 ../../../onmt/bin/train.py --config wmt17/wmt17_ende.yaml --world_size 2 --gpu_ranks 0 1 
+```
+To run standard hopfield
+```
+CUDA_VISIBLE_DEVICES=0,1 python3 ../../../onmt/bin/train.py --config wmt17/wmt17_ende2.yaml --world_size 2 --gpu_ranks 0 1 
+```
+
+Change the config in `wmt17_ende2.yaml` to make it sparsemax, entmax etc.
+
+The sparsemax, entmax version of transformer is finished yet.
 
 ## Tutorials:
 

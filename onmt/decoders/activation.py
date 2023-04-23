@@ -26,7 +26,7 @@ class Hopfield(Module):
                  pattern_size: Optional[int] = None,
                  num_heads: int = 1,
                  scaling: Optional[Union[float, Tensor]] = None,
-                 update_steps_max: Optional[Union[int, Tensor]] = 0,
+                 update_steps_max: Optional[Union[int, Tensor]] = 3,
                  update_steps_eps: Union[float, Tensor] = 1e-4,
 
                  normalize_stored_pattern: bool = True,
@@ -410,9 +410,9 @@ class HopfieldCore(Module):
                  pattern_dim=None,                # type: Optional[int]
                  out_dim=None,                    # type: Optional[int]
                  disable_out_projection=False,    # type: bool
-                 key_as_static=False,             # type: bool
-                 query_as_static=False,           # type: bool
-                 value_as_static=False,           # type: bool
+                 key_as_static=True,             # type: bool
+                 query_as_static=True,           # type: bool
+                 value_as_static=True,           # type: bool
                  value_as_connected=False,        # type: bool
                  normalize_pattern=False,         # type: bool
                  normalize_pattern_affine=False,  # type: bool
@@ -573,7 +573,7 @@ class HopfieldCore(Module):
                 attn_mask=None,                   # type: Optional[Tensor]
 
                 scaling=None,                     # type: Optional[Tensor]
-                update_steps_max=0,               # type: Optional[int]
+                update_steps_max=5,               # type: Optional[int]
                 update_steps_eps=1e-4,            # type: float
                 return_raw_associations=False,    # type: bool
                 return_pattern_projections=False  # type: bool

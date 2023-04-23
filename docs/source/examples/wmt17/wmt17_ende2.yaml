@@ -28,7 +28,7 @@ data:
         path_tgt: wmt17_en_de/dev.trg.bpe
 
 # Model configuration
-save_model: wmt17_en_de/tran-wmt17
+save_model: wmt17_en_de/hopfield-wmt17
 keep_checkpoint: 50
 save_checkpoint_steps: 5000
 average_decay: 0
@@ -60,8 +60,8 @@ param_init_glorot: true
 normalization: "tokens"
 sparse: "softmax"
 
-encoder_type: transformer
-decoder_type: transformer
+encoder_type: hopfield
+decoder_type: hopfield
 enc_layers: 6
 dec_layers: 6
 heads: 8
@@ -74,3 +74,5 @@ attention_dropout: [0.1]
 share_decoder_embeddings: true
 share_embeddings: true
 position_encoding: true
+
+update_steps_max: 1

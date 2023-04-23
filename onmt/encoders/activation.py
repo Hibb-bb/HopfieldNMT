@@ -25,7 +25,7 @@ class Hopfield(Module):
                  pattern_size: Optional[int] = None,
                  num_heads: int = 1,
                  scaling: Optional[Union[float, Tensor]] = None,
-                 update_steps_max: Optional[Union[int, Tensor]] = 0,
+                 update_steps_max: Optional[Union[int, Tensor]] = 3,
                  update_steps_eps: Union[float, Tensor] = 1e-4,
 
                  normalize_stored_pattern: bool = True,
@@ -96,6 +96,8 @@ class Hopfield(Module):
         assert type(batch_first) == bool, f'"batch_first" needs to be a boolean, not {type(batch_first)}.'
         assert (association_activation is None) or (type(association_activation) == str)
 
+
+        self.sparse = sparse
         # Initialise Hopfield association module.
         self.association_core = HopfieldCore(
             embed_dim=input_size, num_heads=num_heads, dropout=dropout, bias=input_bias,
@@ -566,10 +568,11 @@ class HopfieldCore(Module):
                 attn_mask=None,                   # type: Optional[Tensor]
 
                 scaling=None,                     # type: Optional[Tensor]
-                update_steps_max=0,               # type: Optional[int]
+                update_steps_max=5,               # type: Optional[int]
                 update_steps_eps=1e-4,            # type: float
                 return_raw_associations=False,    # type: bool
-                return_pattern_projections=False  # type: bool
+                return_pattern_projections=False, # type: bool
+                sparse='softmax'
                 ):
         # type: (...) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]
         r"""
