@@ -363,6 +363,8 @@ def hopfield_core_forward(query,                           # type: Tensor
                 p_norm_weight=p_norm_weight, p_norm_bias=p_norm_bias,
                 head_dim=head_dim, pattern_dim=pattern_dim, scaling=scaling, update_steps_max=update_steps_max,
                 update_steps_eps=update_steps_eps, return_raw_associations=return_raw_associations)
+
+
     tgt_len, bsz, embed_dim = query.shape[0], value.shape[1], query.shape[2]
     assert embed_dim == embed_dim_to_check
     # allow MHA to have different sizes for the feature dimension

@@ -28,7 +28,7 @@ data:
         path_tgt: wmt17_en_de/dev.trg.bpe
 
 # Model configuration
-save_model: wmt17_en_de/tran-wmt17
+save_model: wmt17_en_de/tran-wmt17-softmax
 keep_checkpoint: 50
 save_checkpoint_steps: 5000
 average_decay: 0

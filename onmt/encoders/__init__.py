@@ -5,7 +5,7 @@ from onmt.encoders.ggnn_encoder import GGNNEncoder
 from onmt.encoders.rnn_encoder import RNNEncoder
 from onmt.encoders.cnn_encoder import CNNEncoder
 from onmt.encoders.mean_encoder import MeanEncoder
-from onmt.encoders.hopfield_transformer import HopfieldTransformerEncoder
+from onmt.encoders.hopfield_transformer_ import HopfieldTransformerEncoder
 
 
 str2enc = {"ggnn": GGNNEncoder, "rnn": RNNEncoder, "brnn": RNNEncoder,

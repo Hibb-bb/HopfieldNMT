@@ -18,7 +18,6 @@ def _make_ix_like(X, dim):
     view[0] = -1
     return rho.view(view).transpose(0, dim)
 
-
 def _roll_last(X, dim):
     if dim == -1:
         return X
@@ -369,7 +368,7 @@ class MultiHeadedAttention(nn.Module):
 
     def __init__(self, head_count: int, model_dim: int, dropout: float = 0.1,
                  max_relative_positions: int = 0,
-                 attn_type: str = None, add_qkvbias=False, sparse='softmax') -> None:
+                 attn_type: str = None, add_qkvbias=False, sparse='softmax', hopfield_steps=1) -> None:
 
         assert model_dim % head_count == 0
         self.dim_per_head = model_dim // head_count
@@ -394,6 +393,7 @@ class MultiHeadedAttention(nn.Module):
         self.attn_type = attn_type
         self.layer_cache = (False, {'keys': torch.tensor([]),
                                     'values': torch.tensor([])})
+
         if max_relative_positions > 0:
             # https://arxiv.org/pdf/1803.02155.pdf
             # in the paper they suggest either two embeds
@@ -408,6 +408,9 @@ class MultiHeadedAttention(nn.Module):
 
             if max_relative_positions == -1:  # rotary embeddings
                 self.rope = rotaryembeddings(self.dim_per_head)
+
+        self.hopfield_steps = hopfield_steps
+        self.update_steps_eps = 1e-4
 
     def update_dropout(self, dropout: float) -> None:
         self.dropout.p = dropout
@@ -438,6 +441,12 @@ class MultiHeadedAttention(nn.Module):
         """
         # 1) Project key, value, and query.
         # as a reminder at training layer_cache[0] remains False
+
+        # for i in range(self.hopfield_steps):
+        
+        bsz = key.size(0)
+        tgt_len, src_len = query.size(1), key.size(1)
+
         if self.layer_cache[0]:
             if self.attn_type == "self":
                 query, key, value = self.linear_query(query),\
@@ -523,6 +532,37 @@ class MultiHeadedAttention(nn.Module):
 
         # 3) Apply attention dropout and compute context vectors.
         attn = self.softmax(scores).to(query.dtype)
+
+        # 4) Hopfield Iteration
+
+        update_active_heads = torch.tensor([[[True]]] * self.head_count * bsz, device=query.device)
+        assert update_active_heads.any(), "at least one head needs to be active."
+        xi = attn
+        xi_old = None
+
+        while update_active_heads.any():
+
+
+            active_xi = xi.masked_select(mask=update_active_heads).view(size=(-1, *xi.shape[1:]))
+            active_k = key.masked_select(mask=update_active_heads).view(size=(-1, *key.shape[1:]))
+            q = torch.masked_scatter(input=query, mask=update_active_heads, source=torch.bmm(active_xi, active_k))
+
+
+            
+            with torch.no_grad():
+                xi_active = xi.view(size=(bsz, self.head_count, tgt_len, src_len))
+                update_active_heads = (update_step < self.hopfield_steps) | (self.hopfield_steps < 0)
+                if xi_old is not None:
+                    update_active_heads &= ((xi_old - xi_active).norm(p=2, dim=(2, 3)).max(axis=0)[0]) > self.update_steps_eps 
+                update_active_heads = update_active_heads.unsqueeze(dim=1).unsqueeze(dim=2).repeat(repeats=(bsz, 1, 1))
+                xi_old = xi_active
+            update_step += 1
+
+            xi = torch.masked_scatter(input=xi, mask=update_active_heads, source=self.softmax(
+                attn_output_weights.masked_select(mask=update_active_heads).view(size=(-1, *xi.shape[1:])), dim=-1))
+
+
+
         drop_attn = self.dropout(attn)
 
         context_original = torch.matmul(drop_attn, value)

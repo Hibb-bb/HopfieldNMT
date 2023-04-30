@@ -372,6 +372,7 @@ class HopfieldTransformerDecoder(HopfieldTransformerDecoderBase):
         dec_out = emb
         assert emb.dim() == 3  # len x batch x embedding_dim
 
+
         pad_idx = self.embeddings.word_padding_idx
         src_lens = kwargs["src_len"]
         src_max_len = self.state["src"].shape[1]

@@ -1,11 +1,11 @@
 # Meta opts:
 ## IO
-save_data: wmt17_en_de/data
+save_data: wmt17_ru_en/data
 overwrite: True
 
 ### vocab:
-src_vocab: wmt17_en_de/vocab.shared
-tgt_vocab: wmt17_en_de/vocab.shared
+src_vocab: wmt17_ru_en/vocab.shared
+tgt_vocab: wmt17_ru_en/vocab.shared
 src_vocab_size: 36000
 tgt_vocab_size: 36000
 vocab_size_multiple: 8
@@ -15,25 +15,25 @@ share_vocab: True
 n_sample: 0
 
 #### Filter
-src_seq_length: 300
-tgt_seq_length: 300
+src_seq_length: 96
+tgt_seq_length: 96
 
 # Corpus opts:
 data:
     corpus_1:
-        path_src: wmt17_en_de/train.src.bpe.shuf
-        path_tgt: wmt17_en_de/train.trg.bpe.shuf
+        path_src: wmt17_ru_en/train.src.bpe.shuf
+        path_tgt: wmt17_ru_en/train.trg.bpe.shuf
     valid:
-        path_src: wmt17_en_de/dev.src.bpe
-        path_tgt: wmt17_en_de/dev.trg.bpe
+        path_src: wmt17_ru_en/dev.src.bpe
+        path_tgt: wmt17_ru_en/dev.trg.bpe
 
 # Model configuration
-save_model: wmt17_en_de/transformer-wmt17-entmax
+save_model: wmt17_ru_en/tran-wmt17
 keep_checkpoint: 50
 save_checkpoint_steps: 5000
 average_decay: 0
 seed: 1
-report_every: 50
+report_every: 100
 train_steps: 50000
 valid_steps: 5000
 
@@ -50,20 +50,20 @@ model_dtype: "fp32"
 #apex_opt_level: "O2"
 optim: "adam"
 learning_rate: 2
-warmup_steps: 1500
+warmup_steps: 4000
 decay_method: "noam"
 adam_beta2: 0.998
-max_grad_norm: 5
+max_grad_norm: 0
 label_smoothing: 0.1
 param_init: 0
 param_init_glorot: true
 normalization: "tokens"
-sparse: "entmax"
+sparse: "softmax"
 
 encoder_type: transformer
 decoder_type: transformer
-enc_layers: 3
-dec_layers: 3
+enc_layers: 6
+dec_layers: 6
 heads: 8
 hidden_size: 512
 word_vec_size: 512
@@ -74,5 +74,3 @@ attention_dropout: [0.1]
 share_decoder_embeddings: true
 share_embeddings: true
 position_encoding: true
-
-update_steps_max: 1

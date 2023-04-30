@@ -32,8 +32,8 @@ class Hopfield(Module):
                  normalize_stored_pattern: bool = True,
                  normalize_stored_pattern_affine: bool = True,
                  normalize_stored_pattern_eps: float = 1e-5,
-                 normalize_state_pattern: bool = True,
-                 normalize_state_pattern_affine: bool = True,
+                 normalize_state_pattern: bool = False,
+                 normalize_state_pattern_affine: bool = False,
                  normalize_state_pattern_eps: float = 1e-5,
                  normalize_pattern_projection: bool = True,
                  normalize_pattern_projection_affine: bool = True,
@@ -173,6 +173,7 @@ class Hopfield(Module):
         :param args: tensors to eventually transpose (dependent on the state of "batch_first")
         :return: eventually transposed tensors
         """
+
         transposed_result = tuple(_.transpose(0, 1) for _ in args) if self.__batch_first else args
         return transposed_result[0] if len(transposed_result) == 1 else transposed_result
 

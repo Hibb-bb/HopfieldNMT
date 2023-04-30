@@ -431,7 +431,8 @@ class TransformerDecoder(TransformerDecoderBase):
         alignment_heads,
         pos_ffn_activation_fn=ActivationFunction.relu,
         add_qkvbias=False,
-        layer_norm='standard'
+        layer_norm='standard',
+        sparse='softmax'
     ):
         super(TransformerDecoder, self).__init__(
             d_model, copy_attn, embeddings, alignment_layer
@@ -452,7 +453,8 @@ class TransformerDecoder(TransformerDecoderBase):
                     alignment_heads=alignment_heads,
                     pos_ffn_activation_fn=pos_ffn_activation_fn,
                     add_qkvbias=add_qkvbias,
-                    layer_norm=layer_norm
+                    layer_norm=layer_norm,
+                    sparse=sparse
                 )
                 for i in range(num_layers)
             ]

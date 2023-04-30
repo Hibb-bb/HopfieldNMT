@@ -1,6 +1,6 @@
 # Meta opts:
 ## IO
-save_data: wmt17_en_de/data
+save_data: wmt17_de_en/data
 overwrite: True
 
 ### vocab:
@@ -21,14 +21,14 @@ tgt_seq_length: 300
 # Corpus opts:
 data:
     corpus_1:
-        path_src: wmt17_en_de/train.src.bpe.shuf
-        path_tgt: wmt17_en_de/train.trg.bpe.shuf
+        path_tgt: wmt17_en_de/train.src.bpe.shuf
+        path_src: wmt17_en_de/train.trg.bpe.shuf
     valid:
-        path_src: wmt17_en_de/dev.src.bpe
-        path_tgt: wmt17_en_de/dev.trg.bpe
+        path_tgt: wmt17_en_de/dev.src.bpe
+        path_src: wmt17_en_de/dev.trg.bpe
 
 # Model configuration
-save_model: wmt17_en_de/transformer-wmt17-entmax
+save_model: wmt17_de_en/transformer-wmt17
 keep_checkpoint: 50
 save_checkpoint_steps: 5000
 average_decay: 0
@@ -58,7 +58,7 @@ label_smoothing: 0.1
 param_init: 0
 param_init_glorot: true
 normalization: "tokens"
-sparse: "entmax"
+sparse: "softmax"
 
 encoder_type: transformer
 decoder_type: transformer

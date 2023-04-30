@@ -129,6 +129,7 @@ def build_decoder(opt, embeddings):
     """
     dec_type = "ifrnn" if opt.decoder_type == "rnn" and opt.input_feed \
                else opt.decoder_type
+    print(dec_type)
     return str2dec[dec_type].from_opt(opt, embeddings)
 
 

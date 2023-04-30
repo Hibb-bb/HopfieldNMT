@@ -29,7 +29,7 @@ class Hopfield(Module):
                  update_steps_eps: Union[float, Tensor] = 1e-4,
 
                  normalize_stored_pattern: bool = True,
-                 normalize_stored_pattern_affine: bool = True,
+                 normalize_stored_pattern_affine: bool = False,
                  normalize_stored_pattern_eps: float = 1e-5,
                  normalize_state_pattern: bool = True,
                  normalize_state_pattern_affine: bool = True,

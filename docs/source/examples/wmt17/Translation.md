@@ -61,7 +61,7 @@ bash scripts/onmt/train.sh
 Translate test sets with various settings on local GPU and CPUs.
 
 ```bash
-python3 ../../../onmt/bin/translate.py --src wmt17_en_de/test.src.bpe --model wmt17_en_de/bigwmt17_step_50000.pt --beam_size 5 --batch_size 4096 --batch_type tokens --output wmt17_en_de/pred.trg.bpe --gpu 0
+python3 ../../../onmt/bin/translate.py --src wmt17_en_de/test.src.bpe --model wmt17_en_de/tran-wmt17_step_50000.pt --beam_size 5 --batch_size 4096 --batch_type tokens --output wmt17_en_de/pred.trg.bpe --gpu 0
 sed -re 's/@@( |$)//g' < wmt17_en_de/pred.trg.bpe > wmt17_en_de/pred.trg.tok
 sacrebleu -tok none wmt17_en_de/test.trg < wmt17_en_de/pred.trg.tok
 ```
