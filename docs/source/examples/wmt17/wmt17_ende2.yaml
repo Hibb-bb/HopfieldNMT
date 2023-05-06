@@ -15,8 +15,8 @@ share_vocab: True
 n_sample: 0
 
 #### Filter
-src_seq_length: 300
-tgt_seq_length: 300
+src_seq_length: 96
+tgt_seq_length: 96
 
 # Corpus opts:
 data:
@@ -28,7 +28,7 @@ data:
         path_tgt: wmt17_en_de/dev.trg.bpe
 
 # Model configuration
-save_model: wmt17_en_de/transformer-wmt17-entmax
+save_model: wmt17_en_de/sparse-wmt17
 keep_checkpoint: 50
 save_checkpoint_steps: 5000
 average_decay: 0
@@ -58,12 +58,12 @@ label_smoothing: 0.1
 param_init: 0
 param_init_glorot: true
 normalization: "tokens"
-sparse: "entmax"
+sparse: "sparsemax"
 
 encoder_type: transformer
 decoder_type: transformer
-enc_layers: 3
-dec_layers: 3
+enc_layers: 6
+dec_layers: 6
 heads: 8
 hidden_size: 512
 word_vec_size: 512
